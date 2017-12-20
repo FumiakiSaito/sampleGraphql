@@ -1,0 +1,31 @@
+version: '2'
+services:
+
+  node_graphql_app:
+    image: node:6.9-alpine
+    container_name: node_graphql_app
+    hostname: nodejs_app
+    env_file: ./server/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server:/src
+    working_dir: /src
+    command: ["sh", "-c", "npm install --no-perm --silent && npm start"]
+    links:
+      - mysql
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    hostname: mysql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_DATABASE=sample"
+    volumes:
+      - "./docker/var/lib/mysql:/var/lib/mysql"
